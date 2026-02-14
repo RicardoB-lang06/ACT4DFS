@@ -1,6 +1,6 @@
 const { ProductosRepository } = require('../repositories/productos.repository');
 
-const { validarProducto, validarBusqueda } = require('../domain/productos.rules');
+const { validarProducto, validarBusqueda, validarUpdate } = require('../domain/productos.rules');
 const { json } = require('express');
 
 const repo = new ProductosRepository();
@@ -17,14 +17,14 @@ async function getAllVisible(req, res) {
 }
 
 async function getById(req, res) {
-  const id = Number(req.params.id)
-  const producto = await repo.getById(id)
+  const id = Number(req.params.id);
+  const producto = await repo.getById(id);
 
-  if (!producto || resultados.length===0) {
-      return res.status(404).json({error: 'Producto no encontrado'})
-}
+  if (!producto) { 
+      return res.status(404).json({error: 'Producto no encontrado'});
+  }
 
-  return res.json(producto)
+  return res.json(producto);
 }
 
 
@@ -74,34 +74,38 @@ async function create(req, res) {
   // if (precio <= 0) {
   //   return res.status(400).json({error: 'Precio inválido'})
   // }
-  const data = validarProducto(nombre, precio)
+  const { nombre, precio } = req.body;
 
-  if(data.error){
-    return res.status(400),json(data.error)
+  const v = validarProducto({ nombre, precio });
+
+  if (!v.ok) {
+    return res.status(400).json({ error: v.error });
   }
 
-  const nuevo = await repo.create(data.nombre, data.precio)
-  return res.status(201).json(nuevo)
+  const nuevo = await repo.create(v.data.nombre, v.data.precio);
+  return res.status(201).json(nuevo);
 }
 
 async function update(req, res) {
   const id = Number(req.params.id);
-  const { nombre, precio } = req.body;
-  const payload = {
-    nombre: nombre !== undefined ? nombre : undefined,
-    precio: precio !== undefined ? precio : undefined
-  };
+  
+  const validation = validarUpdate(req.body);
 
-  if (payload.precio !== undefined && !Number.isFinite(payload.precio) || payload.precio<=0){
-    return res.status(400).json({error:'precio inválido'})
-    }
-  const actualizado = await repo.update(id, payload)
-
-  if (!actualizado) {
-    return res.status(404).json({error: 'No encontrado'})
+  if (!validation.ok) {
+    return res.status(400).json({ error: validation.error });
   }
 
-  return res.json(actualizado)
+  if (Object.keys(validation.data).length === 0) {
+    return res.status(400).json({ error: 'No hay datos para actualizar' });
+  }
+
+  const actualizado = await repo.update(id, validation.data);
+
+  if (!actualizado) {
+    return res.status(404).json({ error: 'Producto no encontrado' });
+  }
+
+  return res.json(actualizado);
 }
 
 async function remove(req, res) {

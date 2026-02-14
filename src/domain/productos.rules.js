@@ -40,4 +40,25 @@ function validarBusqueda(query) {
     };
 }
 
-module.exports = { validarProducto, validarBusqueda };
+function validarUpdate({ nombre, precio }) {
+    const updates = {};
+
+    if (nombre !== undefined) {
+        if (typeof nombre !== 'string' || nombre.trim() === "") {
+            return { ok: false, error: 'El nombre no puede estar vacío' };
+        }
+        updates.nombre = nombre;
+    }
+
+    if (precio !== undefined) {
+        const p = Number(precio);
+        if (isNaN(p) || p <= 0) {
+            return { ok: false, error: 'El precio debe ser un número positivo' };
+        }
+        updates.precio = p;
+    }
+
+    return { ok: true, data: updates };
+}
+
+module.exports = { validarProducto, validarBusqueda, validarUpdate };

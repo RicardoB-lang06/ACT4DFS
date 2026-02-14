@@ -4,7 +4,7 @@ Actividad 4 de la materia Desarrollo Full Stack, con el objetivo de usar búsque
 RECOMENDACIÓN: CONSULTAR EL ARCHIVO DE TEXTO "comandosterminal.txt" ya que ahí se incluyen los comandos que hay que usar en la temrinal para poder ejecutar el código correctamente.
 Y un consejo que puedo dar es que si crean el repositorio en la página web de GitHub es que usen un fetch en la terminal de visual studio para hacer un merge con lo que puedan tener en el repositorio (como el archivo README).
 
-Documentación de POSTMAN: 
+Documentación de POSTMAN: https://documenter.getpostman.com/view/51906899/2sBXcBo2yn
 
 Importante comentar que incluimos un ".gitignore" para ocultar el acceso a la base de datos, pero es posible que cada desarrollador lo haga por su cuenta usando supabase.
 
